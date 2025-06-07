@@ -9,20 +9,25 @@ from utils.utils import get_Dt_ini, get_Dt_fim, cods_mercado
 dag = DAG(
     'taxas_mercado',
     description='Faz a requisição dos dados na API do governo e salva em um banco de dados',
-    schedule_interval=None,
+    schedule_interval="0 9-19 * * *",
     start_date=datetime(2023, 3, 5),
     catchup=False
 )
 
+#Intervalo de datas para consulta na API
 dt_ini = get_Dt_ini()
 dt_fim = get_Dt_fim()
 
+
+
+#Function que puxa quais datas já existem no banco de dados
 def select_data(nome_taxa):
     pg_hook = PostgresHook(postgres_conn_id='postgres')
     records = pg_hook.get_records(f"""select distinct data_referencia from  tx_mercado where taxa = '{nome_taxa}';""")
 
     return records
 
+#Function para criação da tabela, isso se ela não existir !
 def create_table():
     pg_hook = PostgresHook(postgres_conn_id='postgres')
     pg_hook.run("""
@@ -32,6 +37,7 @@ def create_table():
             valor_atual FLOAT
         );""", autocommit=True)
 
+#Função para inserir os dados na tabela criada
 def query_and_insert():
     pg_hook = PostgresHook(postgres_conn_id='postgres')
     conn = pg_hook.get_conn()
@@ -42,7 +48,7 @@ def query_and_insert():
         response = requests.get(url)
         dados = response.json()
 
-        # Conjunto com as datas existentes no banco para essa taxa
+        #Conjunto com as datas existentes no banco para essa taxa
         datas_existentes = set(row[0] for row in select_data(nome_taxa))
 
         registros = []
@@ -65,7 +71,7 @@ def query_and_insert():
 
 
 
-#tasks
+#Tasks 
 
 task_create = PythonOperator(
     task_id='create_table',
@@ -80,5 +86,5 @@ task_query = PythonOperator(
 )
 
 
-
+#Ordem das tasks
 task_create >> task_query 

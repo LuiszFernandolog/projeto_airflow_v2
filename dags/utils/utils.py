@@ -7,6 +7,8 @@ def get_Dt_ini():
 def get_Dt_fim():
     return datetime.now().strftime("%d/%m/%Y")
 
+
+#Parametrização
 cods_mercado = {
     'CDI': 4389,
     'Dolar Compra': 10813,
