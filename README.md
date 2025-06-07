@@ -56,11 +56,11 @@ _____________________________________________________
 📈 Resultados Esperados
 O projeto irá criar automaticamente a tabela tx_mercado no PostgreSQL, com os seguintes campos:
 
-data_referencia
+-data_referencia
 
-taxa
+-taxa
 
-valor_atual
+-valor_atual
 _____________________________________________________
 ### 🔒 Lógica de Inserção
 A DAG busca dados na API do BACEN para um intervalo de datas configurado em utils.py.
@@ -68,7 +68,21 @@ A DAG busca dados na API do BACEN para um intervalo de datas configurado em util
 Antes de inserir, verifica se a data já existe no banco para evitar duplicações.
 _____________________________________________________
 ### 🧪 Testes
-Ainda não implementado.
+*De acordo com o arquivo get_taxas.py, o scheduler foi definido pra rodar a partir das 09hrs até às 19hrs, sendo executado a cada 1 hora. Isso porque as taxas não têm o mesmo horário para atualizar.
+
+Graph da task:
+
+![image](https://github.com/user-attachments/assets/26b5dc19-6546-4d52-a099-a5d386da442a)
+
+
+Inserção(select - simples):
+
+![image](https://github.com/user-attachments/assets/1005fd4a-306f-4fdf-b92d-9a60edbd4497)
+
+
+
+![image](https://github.com/user-attachments/assets/c2d472b6-581c-429f-a8a6-3532b506effa)
+
 _____________________________________________________
 ### 📌 Observações
 O banco de dados PostgreSQL é acessado via a conexão postgres configurada no Airflow.
